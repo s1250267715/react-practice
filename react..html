@@ -8,8 +8,11 @@
 		.li{
 			padding: 20px 0;
 		}
-		.li span{
+		.li .first{
 			margin-left: 50px;
+		}
+		.red{
+			color: red;
 		}
 	</style>
 	<script src="https://cdn.bootcss.com/react/15.4.2/react.min.js"></script>
@@ -57,7 +60,7 @@
 					<div>
 						<input onChange={this.change.bind(this)} ></input>
 						<button onClick = {this.handlerClick.bind(this)}>搜索</button>
-						<List list = {this.state.info}/>
+						<List list = {this.state.info} value = {this.state.value}/>
 					</div>
 				)
 			}
@@ -68,9 +71,16 @@
 				return null
 			}
 			const list = props.list;
+			const val = props.value;
 			console.log(list,'list')
-			const listItems = list.map((item,index) =>
-				<li key={index} className='li'>username:{item.username},<span>phone:{item.phone}</span></li>
+			const listItems = list.map((item,index) =>{
+				let a = item.phone.indexOf(val)
+				if (a>0) {
+					return <li key={index} className='li'>username:{item.username},<span className='first'>phone:{item.phone.substr(0,a)}</span><span className='red'>{item.phone.substr(a,val.length)}</span><span>{item.phone.substr(a+val.length)}</span></li>
+				} else {
+					return <li key={index} className='li'>username:{item.username},<span>phone:{item.phone}</span></li>
+				}
+			}
 			);
 			return (
 				<ul>{listItems}</ul>
