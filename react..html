@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8" />
+	<title>Hello React!</title>
+	<style type="text/css">
+		.li{
+			padding: 20px 0;
+		}
+		.li span{
+			margin-left: 50px;
+		}
+	</style>
+	<script src="https://cdn.bootcss.com/react/15.4.2/react.min.js"></script>
+	<script src="https://cdn.bootcss.com/react/15.4.2/react-dom.min.js"></script>
+	<script src="https://cdn.bootcss.com/babel-standalone/6.22.1/babel.min.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+	<div id="root"></div>
+	<script type="text/babel">
+		class Practice extends React.Component{
+			constructor(props){
+				super(props)
+				this.state = {info:[],value:'',allInfo:[]}
+			}
+			componentDidMount(){
+				let self = this
+				axios.get('https://jsonplaceholder.typicode.com/users')
+  			.then(function (res) {
+					self.state.info = self.state.allInfo = res.data || []
+  			})
+  			.catch(function (error) {
+   				 console.log(error);
+ 				 });
+		 	}
+			handlerClick(){
+				console.log(this.state.value)
+				let val = this.state.value
+				this.setState(prevState=>({
+					info:prevState.info.filter(item=>item.phone.includes(val))
+				}))
+			}
+			change(e){
+				console.log(this.state.info,'change')
+				this.state.info = this.state.allInfo
+				this.setState({
+					value:e.target.value
+				})
+				e.preventDefault();
+				e.stopPropagation();
+			}
+			render(){
+				return (
+					<div>
+						<input onChange={this.change.bind(this)} ></input>
+						<button onClick = {this.handlerClick.bind(this)}>搜索</button>
+						<List list = {this.state.info}/>
+					</div>
+				)
+			}
+		}
+		// list
+		function List(props) {
+			if (!props.list) {
+				return null
+			}
+			const list = props.list;
+			console.log(list,'list')
+			const listItems = list.map((item,index) =>
+				<li key={index} className='li'>username:{item.username},<span>phone:{item.phone}</span></li>
+			);
+			return (
+				<ul>{listItems}</ul>
+			);
+		}
+		ReactDOM.render(
+			<Practice />,
+			document.getElementById('root')
+		)
+	</script>
+</body>
+
+</html>
